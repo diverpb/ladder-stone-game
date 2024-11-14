@@ -1,35 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import { config } from "./config.ts";
+import { observer } from "mobx-react-lite";
+import { gameState, getLadderPoints } from "./gameState.ts";
+import { Cell } from "./components/Cell.tsx";
 
-function App() {
-  const [count, setCount] = useState(0)
+const ladderPoints = getLadderPoints();
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+const App = observer(() => {
+    const { field } = gameState;
+
+    return (
+        <div style={{ display: 'flex'}}>
+            <div style={{marginRight: 20, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <button type="button" onClick={() => gameState.resetState()}>
+                    Все херня<br/>давай по новой
+                </button>
+                <button type="button" onClick={() => gameState.goBack()}>
+                    {"< Назад"}
+                </button>
+            </div>
+            <div style={{
+                position: 'relative',
+                width: config.fieldSize * config.cellSize,
+                height: config.fieldSize * config.cellSize,
+                borderLeft: "1px solid black",
+                borderBottom: "1px solid black",
+            }}>
+                {ladderPoints.map(point => (
+                    <Cell key={point.toString()} point={point} color="lightgray" />
+                ))}
+                {field.flatMap((column, x) => {
+                    return column.map((value, y) => (
+                        <Cell key={`${x}-${y}`} point={[x,y]} haveStone={!!value} />
+                    ))
+                })}
+                {gameState.error && <Cell point={gameState.error} color="red" />}
+            </div>
+        </div>
+    )
+})
 
 export default App
