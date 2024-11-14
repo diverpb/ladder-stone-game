@@ -80,7 +80,7 @@ class GameState {
     goBack() {
         if (!this.history.length) return;
 
-        this.field = this.history.pop();
+        this.field = this.history.pop()!;
     }
 }
 

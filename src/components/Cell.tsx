@@ -4,7 +4,7 @@ import {Stone} from "./Stone.tsx";
 
 type CellProps = {
     point: Point,
-    haveStone: boolean,
+    haveStone?: boolean,
     color?: 'red' | 'lightgray',
 }
 
